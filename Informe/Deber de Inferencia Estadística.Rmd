@@ -5,20 +5,16 @@ date: "2023-08-29"
 output: html_document
 ---
 
+## Introducción
+
+El presente informe aborda el tema de inferencia estadística y está destinado a la resolución de ejercicios propuestos. A lo largo de este documento, se han abordado los problemas planteados en las diferentes secciones, proporcionando respuestas fundamentadas en análisis estadísticos.
+
+Como parte del proceso, se ha empleado la generación de gráficos descriptivos con el fin de facilitar la visualización de datos y apoyar la toma de decisiones. Estos gráficos han desempeñado un papel crucial en la comprensión de los resultados y en la evaluación de la información presentada en cada ejercicio.
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
-library (tidyverse)
-```
-
-## Introducción
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-
-```{r 0, warning=FALSE, message=FALSE, comment="" }
 library (tidyverse)
 ```
 
@@ -72,11 +68,11 @@ ggplot(datos, aes(x=grupo, y=salario, fill=grupo)) +
 ```
 
 ```{r 5, warning=FALSE, message=FALSE, comment="" }
-# Cálculo de los ingresos promedios para cada grupo
+# Cálculo de ingresos promedios para cada grupo
 promedio_trabajadores1 <- mean(trabajadores1)
 promedio_trabajadores2 <- mean(trabajadores2)
 
-# Comparación de los ingresos promedios
+# Comparación de ingresos promedios
 if (promedio_trabajadores1 > promedio_trabajadores2) {
   resultado <- "Trabajadores 1"
 } else if (promedio_trabajadores2 > promedio_trabajadores1) {
@@ -85,9 +81,10 @@ if (promedio_trabajadores1 > promedio_trabajadores2) {
   resultado <- "Ambos grupos tienen el mismo ingreso promedio"
 }
 
-# Imprimir el resultado
+# Resultado
 cat("El grupo con un ingreso promedio más alto es:", resultado)
 ```
+
 **Respuesta:**
 
 El grupo "Trabajadores 1" tiene un ingreso promedio más alto en comparación con el grupo "Trabajadores 2". Esto se determinó calculando los ingresos promedios de ambos grupos y comparándolos.
@@ -105,6 +102,23 @@ anuncio1 <- c(5, 4, 5, 6, 4, 5, 7, 5, 6, 6)
 anuncio2 <- c(5, 6, 5, 7, 5, 5, 6, 7, 7, 6)
 wilcox.test(anuncio1, anuncio2)
 ```
+```{r 6.1, warning=FALSE, message=FALSE, comment="" }
+data <- data.frame(
+  Anuncio = c(rep("Anuncio 1", length(anuncio1)), rep("Anuncio 2", length(anuncio2))),
+  Clics = c(anuncio1, anuncio2)
+)
+
+ggplot(data, aes(x = Anuncio, y = Clics, fill = Anuncio)) +
+  geom_bar(stat = "summary", fun = "mean", position = "dodge") +
+  labs(title = "Comparación de Clics en Anuncios",
+       x = "Anuncio",
+       y = "Clics promedio") +
+  theme_minimal()
+
+
+```
+
+
 ```{r 7, warning=FALSE, message=FALSE, comment="" }
 promedio_anuncio1 <- mean(anuncio1)
 promedio_anuncio2 <- mean(anuncio2)
@@ -118,15 +132,16 @@ if (promedio_anuncio1 > promedio_anuncio2) {
   mensaje <- "Ambos anuncios reciben la misma cantidad de clics en promedio."
 }
 
-# Mostrar el resultado
+# Resultado
 print(mensaje)
 ```
+
 **Respuesta:**
 
 De acuerdo con el promedio de clics sobre el anuncio, el "anuncio2" supera al "anuncio1". Esto sugiere que, en general, el "anuncio2" ha recibido una mayor cantidad de clics en comparación con el "anuncio1". Sin embargo, es importante reconocer que este resultado se basa exclusivamente en los promedios y no considera otras variables que podrían estar influyendo en el rendimiento de los anuncios, como el diseño, la ubicación o la audiencia. Por lo tanto, si bien el "anuncio2" parece más efectivo en términos de clics en promedio, es crucial realizar un análisis más completo y considerar el contexto más amplio antes de tomar decisiones estratégicas.
 
 
-## Ejercicio 3: Comparación de puntuaciones
+## Ejercicio 3: Comparación de puntuacione
 Los datos que tienes no cumplen con las suposiciones de normalidad y deseas comparar las puntuaciones
 medias de dos grupos. ¿Qué grupo tiene una puntuación promedio más alta?
 ```{r 8, warning=FALSE, message=FALSE, comment="" }
@@ -134,6 +149,25 @@ grupoA <- c(5, 5, 5, 6, 6, 5, 5, 6, 5)
 grupoB <- c(6, 6, 7, 7, 6, 6, 7, 6, 6)
 wilcox.test(grupoA, grupoB)
 ```
+
+
+```{r 8.1, warning=FALSE, message=FALSE, comment="" }
+
+data <- data.frame(
+  Grupo = c(rep("Grupo A", length(grupoA)), rep("Grupo B", length(grupoB))),
+  Puntuacion = c(grupoA, grupoB)
+)
+
+barplot(height = tapply(data$Puntuacion, data$Grupo, mean), 
+        names.arg = unique(data$Grupo),
+        col = c("#6A0572", "#00A508"),  # Morado y Verde
+        ylim = c(0, max(data$Puntuacion) + 1),
+        main = "Comparación de Puntuaciones Promedio",
+        xlab = "Grupo",
+        ylab = "Puntuación promedio")
+
+```
+
 **Respuesta:**
 
 De acuerdo con la prueba realizada, esta demuestra que existe una diferencia significativa en la puntuación promedio entre los dos grupos, grupo A y grupo B. El p-valor obtenido es de 0.002753, que es menor que el nivel de significancia comúnmente utilizado de 0.05.
@@ -179,17 +213,19 @@ ggplot(df, aes(x=Metodo, y=Calificacion)) +
 
 ```
 
+
 ```{r 10, warning=FALSE, message=FALSE, comment="" }
 # Ejecutar ANOVA
 aov_res <- aov(Calificacion ~ Metodo, data=df)
 summary(aov_res)
 ```
 
+
 **Respuesta:**
 
-De acuerdo al análisis, el valor p 0.648 es mayor que el nivel de significancia típico de 0.05. Esto significa que no hay evidencia suficiente para rechazar la hipótesis nula (H0). Para lo cual, no se encontraron diferencias significativas en las calificaciones promedio de acuerdo a los tres métodos. Siendo asi, no se puede concluir que uno de los métodos tenga una calificación promedio más alta que los otros dos.
+De acuerdo al análisis ANOVA, el valor p 0.648 es mayor que el nivel de significancia típico de 0.05. Esto significa que no hay evidencia suficiente para rechazar la hipótesis nula (H0). Para lo cual, no se encontraron diferencias significativas en las calificaciones promedio de acuerdo a los tres métodos. Siendo asi, no se puede concluir que uno de los métodos tenga una calificación promedio más alta que los otros dos.
 
-De esta manera, de acuerdo con el análisis estadístico de los resultados del ANOVA, no existe evidencia estadística para afirmar que uno de los métodos resultó en una calificación promedio más alta que los otros métodos. Puesto que, las calificaciones promedio son estadísticamente similares entre los tres métodos.
+De esta manera, de acuerdo con el análisis estadístico de los resultados del ANOVA, no existe evidencia estadística para afirmar que uno de los métodos resultó en una calificación promedio más alta que los otros métodos. Puesto que, las calificaciones promedio son estadísticamente similares entre los tres métodos. Sin embargo, el diagrama de Cajas Comparativo de los Tres Métodos sugiere que el método 2 podría tener una calificación promedio mayor en comparación con los otros dos métodos.
 
 
 ### Ejercicio 5: Preferencia de productos
@@ -219,46 +255,91 @@ prop.test(x = c(sum(productoA), sum(productoB)),
           n = c(length(productoA), length(productoB)))
 ```
 
+```{r 11.1, warning=FALSE, message=FALSE, comment="" }
+
+df_productos <- data.frame(
+  Producto = c("Producto A", "Producto B"),
+  Preferencia = factor(c("Producto A", "Producto B")),
+  Cantidad = c(sum(productoA), sum(productoB))
+)
+
+ggplot(df_productos, aes(x = Producto, y = Cantidad, fill = Preferencia)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = Cantidad), vjust = -0.5, color = "black", size = 4) +
+  labs(title = "Preferencia de Productos (Producto A vs. Producto B)",
+       x = "Producto",
+       y = "Cantidad de Personas") +
+  scale_fill_manual(values = c("Producto A" = "lightblue", "Producto B" = "lightgreen")) +  # Colores personalizados
+  theme_minimal()
+
+
+```
 
 
 **Respuesta:**
 
-Escribe aquí tu respuesta.
+Dado que el valor p es 0.6864 y es mayor que el nivel de significancia común de 0.05, no hay evidencia suficiente para rechazar la hipótesis nula (H0). En otras palabras, no hay una diferencia significativa en las proporciones de clientes que compran los dos productos (Producto A y Producto B).
 
+Además, el intervalo de confianza incluye el valor 0, lo que confirma que no hay una diferencia significativa en las proporciones. Por lo tanto, de acuero a estos resultados, no es posible concluir que uno de los productos sea preferido sobre el otro. Las proporciones de clientes que compran los dos productos son similares, y no hay evidencia estadística de una preferencia significativa por uno de los productos. Por lo que, ambos productos tienen una proporción similar de clientes que los compran.
 
-
-<br>
-<br>
+Observando el gráfico de barras apiladas, podemos notar que el Producto B tiene una cantidad mayor de compradores en comparación con el Producto A. Aunque la prueba de proporciones no mostró una diferencia significativa en las proporciones de clientes que compran ambos productos, el análisis visual de la gráfica sugiere que hay una tendencia hacia una mayor preferencia por el Producto B en la muestra de clientes estudiada. 
 
 ### Ejercicio 6: Efectividad de un medicamento
 
 Un estudio investiga el efecto de un nuevo medicamento para el dolor de cabeza. Se toma una muestra de 10 personas que sufren de dolor de cabeza y se les administra el medicamento. Una semana después, se les vuelve a tomar una muestra para medir el nivel de dolor. Los datos se pueden suponer normales y estos son:
 
-```{r}
+```{r 12, warning=FALSE, message=FALSE, comment="" }
 # Datos antes del medicamento
 antes_medicamento <- c(6.2, 6.8, 7.0, 7.4, 7.6, 7.8, 8.0, 8.2, 8.4, 8.6)
 # Datos después del medicamento
 despues_medicamento <- c(5.8, 6.0, 6.2, 6.4, 6.6, 6.8, 7.0, 7.2, 7.4, 7.6)
-# Escribe tus códigos aquí 
+
+```
+
+```{r 12.1, warning=FALSE, message=FALSE, comment="" }
+data <- data.frame(
+  Tiempo = factor(rep(c("Antes", "Después"), each = 10)),
+  Nivel_de_dolor = c(antes_medicamento, despues_medicamento)
+)
+
+ggplot(data, aes(x = Tiempo, y = Nivel_de_dolor, fill = Tiempo)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Diferencia en el Nivel de Dolor Antes y Después del Medicamento",
+    x = "Tiempo",
+    y = "Nivel de Dolor"
+  ) +
+  scale_fill_manual(values = c("Antes" = "red", "Después" = "blue")) +
+  theme_minimal()
+```
+
+
+
+
+```{r 13, warning=FALSE, message=FALSE, comment="" }
+# Análisis de diferencia de medias (prueba t pareada)
+paired_t_test <- t.test(despues_medicamento, antes_medicamento, paired = TRUE)
+paired_t_test
 ```
 
 ¿Hay evidencia de que el medicamento sea efectivo para reducir el dolor de cabeza?
 
 **Respuesta:**
 
-Escribe aquí tu respuesta.
+De acuerdo con los resultados del análisis implementado, se puede concluir que el medicamento es efectivo en la reducción del dolor de cabeza. Esto determinandose mediante:
+- Prueba t pareada, la cual compara los niveles de dolor de cabeza antes y después de administrar el medicamento.
+- El valor p obtenido fue muy bajo, lo cual indica una diferencia significativa en los niveles de dolor de cabeza antes y después del tratamiento.
+- El intervalo de confianza del 95% para la diferencia de medias (-1.0390404, -0.7609596) no incluye el valor cero, lo que confirma una diferencia significativa.
+- La estimación de la diferencia de medias fue de -0.9, lo que significa que, en promedio, los niveles de dolor de cabeza disminuyeron en 0.9 unidades después del tratamiento con el medicamento.
 
+Siendo de esta manera, los niveles de dolor de cabeza disminuyeron significativamente después del tratamiento con el medicamento, y esta diferencia es estadísticamente significativa. Por lo tanto, se puede afirmar que el medicamento tiene un efecto positivo en la reducción del dolor de cabeza en la muestra estudiada. 
 
-
-<br>
-<br>
 
 ### Ejercicio 7: Relación entre género y preferencia política
 
-
 Un estudio investiga la relación entre el género y la preferencia política. Se toma una muestra de 100 personas y se les pregunta sobre su género y su preferencia política.
 
-```{r}
+```{r 14, warning=FALSE, message=FALSE, comment="" }
 # Creación del data frame para la tabla
 tabla <- data.frame(
   genero = c("hombre", "hombre", "hombre", "mujer", "mujer", "mujer"),
@@ -267,10 +348,45 @@ tabla <- data.frame(
 )
 
 tabla
-# Escribe tus códigos aquí 
 ```
+
+
+```{r 14.1, warning=FALSE, message=FALSE, comment="" }
+ggplot(tabla, aes(x = genero, y = cantidad, fill = preferencia_politica)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Relación entre Género y Preferencia Política",
+    x = "Género",
+    y = "Cantidad",
+    fill = "Preferencia Política"
+  ) +
+  scale_fill_manual(
+    values = c("#FFB6C1", "#FFD700", "#98FB98"),
+    labels = c("Izquierda", "Centro", "Derecha")
+  ) +
+  theme_minimal()
+
+```
+
+
+
+```{r 15, warning=FALSE, message=FALSE, comment="" }
+# Tabla de contingencia
+tabla_contingencia <- table(tabla$genero, tabla$preferencia_politica)
+
+# Análisis de chi-cuadrado
+chi_squared_test <- chisq.test(tabla_contingencia)
+chi_squared_test
+```
+
 
 **Respuesta:**
 
-Escribe aquí tu respuesta.
+De acuerdo con los resutados del análisis de chi-cuadrado realizado para evaluar la relación entre el género y la preferencia política en la muestra de 100 personas se menciona que:
+
+- El valor p fue igual a 1, lo que indica que no hay evidencia significativa de una asociación entre el género y la preferencia política en la muestra estudiada.
+
+- El estadístico de chi-cuadrado calculado fue igual a 0, lo que sugiere que la diferencia entre las observaciones reales y las esperadas en la tabla de contingencia es mínima.
+
+De acuerdo a los resultados, no se puede concluir que el género y la preferencia política estén relacionados en esta muestra particular de 100 personas. No hay evidencia estadística que respalde una asociación significativa entre estas dos variables en este estudio.
 
